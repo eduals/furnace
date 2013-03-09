@@ -66,6 +66,8 @@
                 <ul class="span5">
                     <li><p class="calc-header">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</p></li>
                     <li><label for="gas-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input" value="1250" /><span class="units">&deg;C</span></label></li>
+                    <li><label for="gas-samp-temp">Reference Temperature <input name="tref" type="text" class="gas-input" value="1200" /><span class="units">&deg;C</span></label></li>
+                    <li><label for="gas-samp-temp">Correction to zirconia cell <input name="corrEMF" type="text" class="gas-input" value="32" /><span class="units">mV</span></label></li>
                     <li><label for="gas-samp-fo2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                     <li class="offset-input"><label for="buffer" class="">Buffer
                             <select id="gas-fO2-buffer" name="gas-fO2-buffer" class="">
@@ -172,7 +174,7 @@
       <script src="./js/mustache.js"></script>
       <script src="./js/app.js"></script>
       <script id="gas-output-template" type="text/html">
-        <table class="table table-condensed">
+        <table class="table table-condensed table-hover table-striped">
             <thead><tr><td></td><td>Sample Furnace</td><td>Reference Furnace</td></tr></thead>
             <tbody>
                 <tr>
@@ -192,7 +194,7 @@
                 </tr>
                 <tr>
                     <td>dlogfO<sub>2</sub>/dCO<sub>2</sub>%</td>
-                    <td>{deltafO2deltaCO2}}</td>
+                    <td>{{deltafO2deltaCO2}}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -217,8 +219,8 @@
                 </tr>
                 <tr>
                     <td>Buffer + Offset</td>
-                    <td>{{buffer}}</td>
-                    <td>{{fO2Offset2}}</td>
+                    <td>{{buffer}} {{fO2Offset2}}</td>
+                    <td>&nbsp;</td>
                 </tr>
             </tbody>
         </table>
