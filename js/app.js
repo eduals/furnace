@@ -26,7 +26,7 @@
 			});
 			this.GAS.startProcess();
 		},
-		resetGAS : function() { this.GAS.resetAllVars(); },
+		resetGAS : function () { this.GAS.resetAllVars(); $('.gas-output-area').empty(); },
 		initApp : function () { return true; }
 	};
 
@@ -325,5 +325,17 @@ $(document).bind('showgas', GAS.showOutput);
 $(document).ready(function(){
 	$('.program-section').hide();
 	$('.program-section:first').show();
-	//$('div#gasrev2').show();
+	$('div#gasrev2').show();
+	$(document).ready(function(){
+	   $(window).responsiveWeb({
+			applyBodyClasses: true,
+			applyResolution: true,
+			applyPlatform: false,
+			applyBrowser: false,
+			applyBrowserVersion: false,
+			manipulateDesign: false,
+			rearrangeObjects: false,
+			debug: true
+		});
+	});
 });
