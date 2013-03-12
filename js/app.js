@@ -325,4 +325,5 @@ $(document).bind('showgas', GAS.showOutput);
 $(document).ready(function(){
 	$('.program-section').hide();
 	$('.program-section:first').show();
+	//$('div#gasrev2').show();
 });

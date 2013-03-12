@@ -79,14 +79,17 @@
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
-                <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
+                <li class="buttons">
+                    <a href="#" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="#" name="reset" class="btn btn-danger span3">RESET</a>
+                </li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
         </div>
         <div id="gasrev2" class="row-fluid form-inline program-section">
             <ul class="span5">
                 <li><p class="calc-header">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</p></li>
-                <li><label for="gas2-samp-temp">Sample Temperature <input name="temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="gas2-samp-temp">Sample Temperature <input name="temp" type="text" class="gas-input"><span class="units">&deg;C</span></label></li>
                 <li><label for="gas2-ref-temp">Reference Temperature <input name="logfo2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
                 <li><label for="gas2-ref-fO2">Reference fO<sub>2</sub> <input name="logfo2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li class="offset-input"><label for="gas2-fO2-buffer" class="">Buffer

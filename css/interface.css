@@ -48,7 +48,7 @@ div.program-section ul li.offset-input select {
 
 div.program-section ul li.buttons {
 	position: relative;
-	left: 175px;
+	padding-right: 35px;
 }
 
 p.calc-header{
