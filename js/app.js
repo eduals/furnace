@@ -21,9 +21,10 @@
 			this.GAS = window.GAS;
 			this.calculator = "GAS";
 			this.GAS.resetAllVars();
-			$('div#gas').find('input').each(function () {
+			$('div#gas').find('input, select').each(function () {
 				app.GAS[$(this).attr('name')] = $(this).val();
 			});
+			//this.GAS.buffer = $('select.buffer', 'div#gas').val();
 			this.GAS.startProcess();
 		},
 		resetGAS : function () { this.GAS.resetAllVars(); $('.gas-output-area').empty(); },
@@ -120,7 +121,7 @@
 			case "WM":
 				GAS.specfO2 = (13.12 - (32730 / tcOffset)) + GAS.fO2Offset2;
 				break;
-			case "MH":
+			case "HM":
 				GAS.specfO2 = (13.966 - (24634 / tcOffset)) + GAS.fO2Offset2;
 				break;
 			case "QFM":
@@ -147,7 +148,7 @@
 			case "WM":
 				GAS.fO2Offset2 = GAS.specfO2 - (13.12 - (32730 / adjTC));
 				break;
-			case "MH":
+			case "HM":
 				GAS.fO2Offset2 = GAS.specfO2 - (13.966 - (24634 / adjTC));
 				break;
 			case "QFM":
@@ -287,7 +288,8 @@
 			$(document).trigger('outputgas');
 		},
 		showBadMixError : function () {
-			//Popup for bad mix ratio.  Then resets vars.
+			$('div#bad-ratio-popup').modal();
+			$('#gas-output-area').empty();
 		},
 		formatOutput : function () {
 			var tpl = $('script#gas-output-template').html();
@@ -300,7 +302,7 @@
 		},
 		showOutput : function () {
 			$('#gas-output-area', "div#gas").show();
-			GAS.resetAllVars();
+			//GAS.resetAllVars();
 		}
 	};
 
