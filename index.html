@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<!-- saved from url=(0055)http://twitter.github.com/bootstrap/examples/fluid.html -->
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <title>NASA Furnace App</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="MELTS">
+        <meta name="author" content="elsewares & brian e hollenbeck">
+
+        <!-- Le styles -->
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <link href="css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="css/interface.css" rel="stylesheet">
+        <style type="text/css">
+          body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+          }
+          .sidebar-nav {
+            padding: 9px 0;
+          }
+        </style>
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <!-- Fav and touch icons -->
+    </head>
+    <body>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">NASA Furnace App</a>
+            <div class="nav-collapse collapse">
+              <ul class="nav">
+                <li class="active"><a href="#" rel="main">HOME</a></li>
+                <!--<li><a href="#" rel="gas">GAS</a></li>
+                <li><a href="#" rel="gasrev2">GASREV2</a></li>
+                <li><a href="#" rel="ramp">GASREV2</a></li>
+                <li><a href="#" rel="calib3">CALIB3</a></li>-->
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </div>
+      </div>
+      <div class="container-fluid">
+        <div class="row-fluid">
+            <div id="main" class="">
+                <h3>NASA CO/CO<sub>2</sub> Gas-Mixing Furnace Parameter Program</h3>
+                <p class="text-warning">For extreme ranges other than 1000&deg;C &lt; T &lt; 1400&deg;C or -6 &lt; log fO<sub>2</sub> &lt; -16, the zirconia cell may become non-ideal.</p>
+                <ul>
+                    <li><h3 class="btn btn-default gas-btn" rel="gas">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</h3></li>
+                    <li><h3 class="btn btn-default gasrev2-btn" rel="gasrev2">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</h3></li>
+                    <li><h3 class="btn btn-default ramp-btn" rel="ramp">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</h3></li>
+                    <li><h3 class="btn btn-default calib3-btn" rel="calib3">Determine EMF fO<sub>2</sub> and buffer + offset for a fixed gas mixture and temperature range.</h3></li>
+                </ul>
+            </div>
+        </div>
+        <div id="gas" class="row-fluid form-inline program-section">
+            <ul class="span4">
+                <li><p class="calc-header">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</p></li>
+                <li><label for="gas-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input" value="1250" /><span class="units">&deg;C</span></label></li>
+                <li><label for="gas-samp-temp">Reference Temperature <input name="tref" type="text" class="gas-input" value="1200" /><span class="units">&deg;C</span></label></li>
+                <li><label for="gas-samp-temp">Correction to zirconia cell <input name="corrEMF" type="text" class="gas-input" value="32" /><span class="units">mV</span></label></li>
+                <li><label for="gas-samp-fo2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li class="offset-input"><label for="buffer" class="">Buffer
+                        <select id="gas-fO2-buffer" name="gas-fO2-buffer" class="">
+                            <option value="IW">IW +</option>
+                            <option value="HM">HM +</option>
+                            <option value="NNO">NNO +</option>
+                            <option value="QFM">QFM +</option>
+                        </select>
+                        <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
+                </label></li>
+                <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
+            </ul>
+            <div class="span5 offset1 gas-output-area"></div>
+        </div>
+        <div id="gasrev2" class="row-fluid form-inline program-section">
+            <ul class="span5">
+                <li><p class="calc-header">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</p></li>
+                <li><label for="gas2-samp-temp">Sample Temperature <input name="temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="gas2-ref-temp">Reference Temperature <input name="logfo2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="gas2-ref-fO2">Reference fO<sub>2</sub> <input name="logfo2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li class="offset-input"><label for="gas2-fO2-buffer" class="">Buffer
+                        <select name="gas2-fO2-buffer" class="">
+                            <option value="manual">Manual</option>
+                            <option value="HM">HM +</option>
+                            <option value="NNO">NNO +</option>
+                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW +</option>
+                        </select>
+                        <input name="gas2-buffer-value" type="text" class="input-mini gas-input"/>
+                </label></li>
+                <li><label for="gas2-fO2-EMF">Corrected EMF <input name="gas2-fO2-EMF" type="text" class="gas-input"/><span class="units">mV</span></label></li>
+                <li><label for="gas2-zir-EMF">Corrected Zirconia Cell EMF <input name="gas2-zir-EMF" type="text" class="gas-input"/><span class="units">mV</span></label></li>
+                <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
+            </ul>
+        </div>
+        <div id="ramp" class="row-fluid form-inline program-section">
+            <ul class="span5">
+                <li><p class="calc-header">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</p></li>
+                <li><label for="ramp-orig-sample-temp">Original Sample Temperature <input name="ramp-orig-sample-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="ramp-final-temp">Final Temperature <input name="ramp-final-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="ramp-samp-fO2">Sample fO<sub>2</sub> <input name="ramp-samp-fO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li class="offset-input"><label for="ramp-samp-fO2-buffer" class="">Buffer
+                        <select name="ramp-samp-fO2-buffer" class="">
+                            <option value="manual">Manual</option>
+                            <option value="HM">HM +</option>
+                            <option value="NNO">NNO +</option>
+                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW +</option>
+                        </select>
+                        <input name="ramp-samp-buffer-value" type="text" class="input-mini gas-input"/>
+                </label></li>
+                <li><label for="ramp-step-fO2">fO<sub>2</sub> Step Size <input name="ramp-step-fO2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li class="offset-input"><label for="ramp-ref-fO2-buffer" class="">Buffer
+                        <select name="ramp-ref-fO2-buffer" class="">
+                            <option value="manual">Manual</option>
+                            <option value="HM">HM +</option>
+                            <option value="NNO">NNO +</option>
+                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW +</option>
+                        </select>
+                        <input name="ramp-ref-buffer-value" type="text" class="input-mini gas-input"/>
+                </label></li>
+                <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
+            </ul>
+        </div>
+        <div id="calib3" class="row-fluid program-section form-inline">
+            <ul class="span5">
+                <li><p>Determine EMF fO<sub>2</sub> and buffer + offset for a fixed gas mixture and temperature range.</p></li>
+                <li><label for="calib-orig-temp">Original Calibration Temperature <input name="calib-orig-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="calib-co2-vol">Gas Mix Percentage of CO<sub>2</sub> <input name="calib-co2-vol" type="text" class="gas-input"/><span class="units">%</span></label></li>
+                <li><label for="calib-final-temp">Final Temperature <input name="calib-final-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="calib-step-fO2">fO<sub>2</sub> Step Size <input name="calib-step-fO2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li class="offset-input"><label for="calib-ref-fO2-buffer" class="">Buffer
+                        <select name="calib-ref-fO2-buffer" class="">
+                            <option value="manual">Manual</option>
+                            <option value="HM">HM +</option>
+                            <option value="NNO">NNO +</option>
+                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW +</option>
+                        </select>
+                        <input name="calib-fO2-buffer-value" type="text" class="input-mini gas-input"/>
+                </label></li>
+                <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
+            </ul>
+        </div><!--/row-->
+        <hr>
+        <footer>
+          <p>&copy; elsewares - 2012</p>
+        </footer>
+      </div><!--/.fluid-container-->
+
+      <!-- Le javascript ================================================== -->
+      <!-- Placed at the end of the document so the pages load faster -->
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/webfont/1.1.0/webfont.js">
+        WebFontConfig = {
+            google: {
+                families: [ 'Titillium Web:regular,bold,200,400,700' ]
+            }
+        };
+      </script>
+      <script src="./js/bootstrap.js"></script>
+      <script src="./js/mustache.js"></script>
+      <script src="./js/app.js"></script>
+      <script id="gas-output-template" type="text/html">
+        <table class="table table-condensed table-hover table-striped table-bordered">
+            <thead><tr><td></td><td>Sample Furnace</td><td>Reference Furnace</td></tr></thead>
+            <tbody>
+                <tr class="temperature integer">
+                    <td>Temperature (&deg;C)</td>
+                    <td>{{tc}}</td>
+                    <td>{{tref}}</td>
+                </tr>
+                <tr class="fO2">
+                    <td>log fO<sub>2</sub></td>
+                    <td class="float">{{specfO2}}</td>
+                    <td class="float">{{reffO2}}</td>
+                </tr>
+                <tr>
+                    <td>CO<sub>2</sub>%</td>
+                    <td class="float">{{mixRatio}}</td>
+                    <td class="float">{{refRatio}}</td>
+                </tr>
+                <tr>
+                    <td>dlogfO<sub>2</sub>/dCO<sub>2</sub>%</td>
+                    <td class="float">{{deltafO2deltaCO2}}</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>EMF (mV)</td>
+                    <td>&nbsp;</td>
+                    <td class="float">{{realEMF}}</td>
+                </tr>
+                <tr>
+                    <td>dEMF/dT (mV)</td>
+                    <td>&nbsp;</td>
+                    <td class="float">{{deltaEMFdeltaT}}</td>
+                </tr>
+                <tr>
+                    <td>dEMF/dfO<sub>2</sub> (mV/.1)</td>
+                    <td>&nbsp;</td>
+                    <td class="float">{{deltaEMFdeltafO2}}</td>
+                </tr>
+                <tr>
+                    <td>EMF Correction (mV)</td>
+                    <td class="float">{{corrEMF}}</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>Buffer + Offset</td>
+                    <td>{{buffer}} Offset: {{fO2Offset2}}</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+      </script>
+  </body>
+</html>
