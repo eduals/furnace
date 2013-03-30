@@ -12,14 +12,14 @@
 
 	var APP = {
 		GAS : null,
-		GASREV2 : null,
+		gasrev2 : null,
 		RAMP : null,
 		CALIB3 : null,
 		calculator : null,
 		processGAS : function () {
 			var app = this;
 			this.GAS = window.GAS;
-			this.calculator = "GAS";
+			this.GAS.calculator = "gas";
 			this.GAS.resetAllVars();
 			$('div#gas').find('input, select').each(function () {
 				app.GAS[$(this).attr('name')] = $(this).val();
@@ -28,12 +28,22 @@
 			this.GAS.startProcess();
 		},
 		resetGAS : function () { this.GAS.resetAllVars(); $('.gas-output-area').empty(); },
+		processgasrev2 : function () {
+			var app = this;
+			this.GAS = window.GAS;
+			this.GAS.calculator = "gasrev2";
+			$('div#gasrev2').find('input, select').each(function () {
+				app.GAS[$(this).attr('name')] = $(this).val();
+			});
+			this.GAS.startProcess();
+		},
 		initApp : function () { return true; }
 	};
 
 	/* GAS */
 	var GAS = {
 
+		calculator : null,
 		RM : function (x, y) { return (x-3*x*Math.pow(10,y)-2*(Math.pow(Math.pow(10,y),(3/2))))/(2*x*Math.pow(10,y)+Math.pow(10, y)+(Math.pow(Math.pow(10,y),(3/2)))+Math.sqrt(Math.pow(10,y))); },
 		x : null,
 		y : null,
@@ -42,24 +52,28 @@
 		tc : null, 				// Sample temperature
 		tref : null, 			// Reference temperature
 		fO2Offset2 : 100, 		// Sample O2 fugacity offset
-		logfO2 : null,				// O2 fugacity
+		logfO2 : null,			// O2 fugacity
+		specfO2 : null,			// Fugacity value
 		reffO2 : null,			// Reference fO2
 		stepfO2 : 1,			// fO2 step variable
-		stepfO2Flag: true, 		// flag for deltaFO2
+		stepfO2Flag: true, 		// flag for deltaFO2 calculations
+		continueRatio: false,	// flag for continuing calculations with a > 100% gas mix
 		deltaRatio : null,		// ratio between sample and reference fO2
-		fCO2 : null,				// CO2 fugacity
-		mixRatio : null,			// Gas mix ratio
-		refRatio : null,			// True reference mix ratio (mixRatio - dVolCO2)
-		volCO2 : null,				// CO2 volume
+		fCO2 : null,			// CO2 fugacity
+		mixRatio : null,		// Gas mix ratio
+		refRatio : null,		// True reference mix ratio (mixRatio - dVolCO2)
+		specRatio : null,		// True specimen mix ratio (mixRatio - dVolCO2)
+		volCO2 : null,			// CO2 volume
 		dVolCO2 : null,			// delta CO2 volume
 		buffer : "IW", 			// Fugacity reference buffer
-		specfO2 : null,	// Fugacity value
 		corrEMF : 26, 			// Zirconia cell correction
 		idealEMF : null,
 		realEMF : null,
-		deltafO2deltaCO2 : null,
-		deltaEMFdeltafO2 : null,
-		deltaEMFdeltaT : null,
+		dfO2dCO2 : null,
+		dCO2dfO2ref : null,
+		dCO2dfO2spec : null,
+		dEMFdfO2 : null,
+		dEMFdT : null,
 		stableC : false,
 		lastRun : {},
 		defaultVars : {
@@ -69,7 +83,8 @@
 			"t": 0,
 			"tc": null,
 			"tref": null,
-			"fO2Offset2": 0,
+			"reffO2": null,
+			"fO2Offset2": null,
 			"stepfO2": 1,
 			"stepfO2Flag": true,
 			"deltaRatio": null,
@@ -81,9 +96,11 @@
 			"buffer": "IW",
 			"specfO2": null,
 			"corrEMF": null,
-			"deltafO2deltaCO2" : null,
-			"deltaEMFdeltafO2" : null,
-			"deltaEMFdeltaT" : null,
+			"idealEMF" : null,
+			"realEMF" : null,
+			"dfO2dCO2" : null,
+			"dEMFdfO2" : null,
+			"dEMFdT" : null,
 			"stableC" : false,
 		},
 		resetAllVars : function () {
@@ -99,48 +116,125 @@
 			GAS.tc = parseFloat(GAS.tc);
 			GAS.tref = parseFloat(GAS.tref);
 			GAS.corrEMF = parseFloat(GAS.corrEMF);
-
-			if (GAS.specfO2 !== "") {
-				GAS.buffer = "MANUAL";
-				GAS.specfO2 = parseFloat(GAS.specfO2);
-				GAS.logfO2 = GAS.specfO2;
-				GAS.fO2Offset2 = 0.0;
-			} else {
-				GAS.fO2Offset2 = parseFloat(GAS.fO2Offset2);
+			if (GAS.calculator == "gas"){
+				GAS.parsefO2Input("specfO2");
 			}
-
+			if (GAS.calculator == "gasrev2"){
+				if (GAS.fO2Offset2 == "EMF") {
+					GAS.reffO2 = null;
+					GAS.buffer = "EMF";
+				} else {
+					GAS.parsefO2Input('reffO2');
+				}
+				GAS.realEMF = parseFloat(GAS.realEMF);
+			}
 			GAS.stepfO2flag = true;
 			$(document).trigger('setspecfo2');
 		},
+		parsefO2Input : function (fo2) {
+			if (GAS[fo2] !== "") {
+				GAS.buffer = "MANUAL";
+				GAS[fo2] = parseFloat(GAS[fo2]);
+				GAS.logfO2 = GAS[fo2];
+				GAS.fO2Offset2 = 0;
+			} else {
+				GAS.fO2Offset2 = parseFloat(GAS.fO2Offset2);
+			}
+		},
 		setSpecfO2 : function () {
-			var tcOffset = (GAS.tc + 273);
+			var t = GAS.setTempVar();
+			var fo2 = GAS.setfO2Var();
+			var tOffset = (GAS[t] + 273);
 			switch (GAS.buffer) {
 			case "IW":
-				GAS.specfO2 = (6.57 - (27215 / tcOffset)) + GAS.fO2Offset2;
+				GAS[fo2] = (6.57 - (27215 / tOffset)) + GAS.fO2Offset2;
 				break;
 			case "WM":
-				GAS.specfO2 = (13.12 - (32730 / tcOffset)) + GAS.fO2Offset2;
+				GAS[fo2] = (13.12 - (32730 / tOffset)) + GAS.fO2Offset2;
 				break;
 			case "HM":
-				GAS.specfO2 = (13.966 - (24634 / tcOffset)) + GAS.fO2Offset2;
+				GAS[fo2] = (13.966 - (24634 / tOffset)) + GAS.fO2Offset2;
 				break;
 			case "QFM":
-				GAS.specfO2 = (9.0 - (25738 / tcOffset)) + GAS.fO2Offset2;
+				GAS[fo2] = (9.0 - (25738 / tOffset)) + GAS.fO2Offset2;
 				break;
 			case "NNO":
-				GAS.specfO2 = (9.359999 - (24930 / tcOffset)) + GAS.fO2Offset2;
+				GAS[fo2] = (9.359999 - (24930 / tOffset)) + GAS.fO2Offset2;
 				break;
 			case "MANUAL":
-				GAS.setManualfO2();
+				GAS.setManualfO2(fo2);
+				break;
+			case "EMF":
+				GAS.setfO2byEMF();
 				break;
 			default:
 				break;
 			}
-			GAS.logfO2 = GAS.specfO2;
+			GAS.logfO2 = GAS[fo2];
 			$(document).trigger('setmixratio');
 		},
-		setManualfO2 : function () {
+		setTempVar : function () {
+			switch (GAS.calculator) {
+				case "gas":
+					return "tc";
+					break;
+				case "gasrev2":
+					return "tref";
+					break;
+				default:
+					return "tc";
+					break;
+			}
+		},
+		setfO2Var : function () {
+			switch (GAS.calculator) {
+				case "gas":
+					return "specfO2";
+					break;
+				case "gasrev2":
+					return "reffO2";
+					break;
+				default:
+					return "specfO2";
+					break;
+			}
+		},
+		setManualfO2 : function (fo2) {
 			var adjTC = GAS.tc + 273;
+			switch (GAS.buffer) {
+			case "IW":
+				GAS.fO2Offset2 = GAS[fo2] - (6.57 - (27215 / adjTC));
+				break;
+			case "WM":
+				GAS.fO2Offset2 = GAS[fo2] - (13.12 - (32730 / adjTC));
+				break;
+			case "HM":
+				GAS.fO2Offset2 = GAS[fo2] - (13.966 - (24634 / adjTC));
+				break;
+			case "QFM":
+				GAS.fO2Offset2 = GAS[fo2] - (9 - (25738 / adjTC));
+				break;
+			case "NNO":
+				GAS.fO2Offset2 = GAS[fo2] - (9.359999 - (24930 / adjTC));
+				break;
+			default:
+				GAS.fO2Offset2 = GAS[fo2] - (6.57 - (27215 / adjTC));
+				break;
+			}
+			GAS.logfO2 = GAS[fo2];
+			$(document).trigger('setmixratio');
+		},
+		setfO2byEMF : function () {
+			GAS.idealEMF = GAS.realEMF - GAS.corrEMF;
+			GAS.reffO2 = GAS.logfO2 = GAS.idealEMF / (0.0496055 * (GAS.tref + 273));
+			if (GAS.calculator == "gasrev2") {
+				GAS.stepfO2Flag = true;
+				if($(document).trigger('setmixratio')){
+					GAS.validateMixRatio();
+				}
+			}
+		},
+		calculatefO2Offset : function () {
 			switch (GAS.buffer) {
 			case "IW":
 				GAS.fO2Offset2 = GAS.specfO2 - (6.57 - (27215 / adjTC));
@@ -161,8 +255,6 @@
 				GAS.fO2Offset2 = GAS.specfO2 - (6.57 - (27215 / adjTC));
 				break;
 			}
-			GAS.logfO2 = GAS.specfO2;
-			$(document).trigger('setmixratio');
 		},
 		setMixRatio : function () {
 			// Variables
@@ -206,15 +298,21 @@
 			// Set carbon stability notification - if carbon will precipitate, set to true to display message
 			if (Math.pow(10, fO2) < (k2 * GAS.fCO2)) { GAS.stableC = true; }
 			var ret = {};
-			ret.mix = GAS.mixRatio; ret.co2 = volCO2; ret.fO2 = fO2;
+			ret.mix = GAS.mixRatio; ret.co2 = volCO2; ret.dco2 = dVolCO2; ret.fO2 = fO2;
 			return ret;
 		},
 		validateMixRatio : function () {
-			if (GAS.volCO2 < 100) {
+			if (GAS.volCO2 < 100.0) {
 				GAS.mixRatio = GAS.volCO2;
-				$(document).trigger('calculatereferencefo2');
+				GAS.dCO2dfO2ref = GAS.dVolCO2;
+				if (GAS.calculator == "gasrev2") {
+					$(document).trigger('calculatespecimenfo2');
+				} else {
+					$(document).trigger('calculatereferencefo2');
+				}
 			} else {
-				$(document).trigger('badmixratio').trigger('resetallvars');
+				GAS.continueRatio = false;
+				$(document).trigger('badmixratio');
 			}
 		},
 		calculateReferencefO2 : function () {
@@ -246,6 +344,36 @@
 			GAS.refRatio = GAS.mixRatio - tDelta;
 			$(document).trigger('setemfvars');
 		},
+		calculateSpecimenfO2 : function () {
+			var tDelta = tRatio = 1;
+			//if (GAS.tc <= GAS.tref) { GAS.stepfO2 = -1; }
+			GAS.stepfO2Flag = false;
+			var step = 1; var done = false; var i = 1;
+			while (Math.abs(tDelta) > 0.001) {
+				if (GAS.tref < GAS.tc) {
+					tRatio = GAS.calcMixRatio(GAS.logfO2 - (step * i));
+					tDelta = GAS.calcDeltaRatio(tRatio);
+					if (tDelta < 0) {
+						i++;
+					} else {
+						step = step / 2;
+						i = 1;
+					}
+				} else {
+					tRatio = GAS.calcMixRatio(GAS.logfO2 - step);
+					tDelta = GAS.calcDeltaRatio(tRatio);
+					if (tDelta > 0) {
+						step = step / 2;
+						done = false;
+					}
+				}
+			}
+			GAS.specfO2 = GAS.logfO2 = tRatio.fO2;
+			GAS.deltaRatio = tDelta;
+			GAS.specRatio = GAS.mixRatio - tDelta;
+			GAS.dCO2dfO2spec = GAS.dVolCO2;
+			$(document).trigger('outputgas');
+		},
 		calcDeltaRatio : function (obj){
 			return obj.mix - obj.co2;
 		},
@@ -256,7 +384,7 @@
 		setEMFVars : function () {
 			GAS.idealEMF = GAS.calculateEMF(GAS.tref, GAS.reffO2);
 			GAS.realEMF = GAS.idealEMF + GAS.corrEMF;
-			GAS.deltaEMFdeltafO2 = (GAS.calculateEMF(GAS.tref, (GAS.reffO2 + 0.1)) - GAS.calculateEMF(GAS.tref, (GAS.reffO2 - 0.1))) / 2;
+			GAS.dEMFdfO2 = (GAS.calculateEMF(GAS.tref, (GAS.reffO2 + 0.1)) - GAS.calculateEMF(GAS.tref, (GAS.reffO2 - 0.1))) / 2;
 			$(document).trigger('calculatedemfdt');
 		},
 		calculateEMF : function (t, f) {
@@ -280,43 +408,67 @@
 
 			var newfO2a = Math.log(10) * 0.5 * (Math.log(q[1]) + part);
 			var newfO2b = Math.log(10) * 0.5 * (Math.log(q[2]) + part);
-			GAS.deltaEMFdeltaT = (GAS.calculateEMF(GAS.tref + 1, newfO2a) - GAS.calculateEMF(GAS.tref - 1, newfO2b)) / 2;
+			GAS.dEMFdT = (GAS.calculateEMF(GAS.tref + 1, newfO2a) - GAS.calculateEMF(GAS.tref - 1, newfO2b)) / 2;
 			$(document).trigger('calculatedfo2dfco2');
 		},
 		calculatedfO2dfCO2 : function () {
-			GAS.deltafO2deltaCO2 = 0.1/GAS.dVolCO2;
+			GAS.dfO2dCO2 = 0.1/GAS.dVolCO2;
 			$(document).trigger('outputgas');
 		},
 		showBadMixError : function () {
 			$('div#bad-ratio-popup').modal();
 			$('#gas-output-area').empty();
 		},
+		mixRatioResume : function () {
+			if (GAS.calculator == "gasrev2") {
+				GAS.continueRatio = true;
+				$(document).trigger('setmixratio');
+			}
+		},
 		formatOutput : function () {
-			var tpl = $('script#gas-output-template').html();
+			var tp = "script#" + GAS.calculator + "-output-template";
+			var tpl = $(tp).html();
 			var html = Mustache.render(tpl, GAS);
-			$('.gas-output-area', 'div#gas').html(html);
+			var ctx = "div#" + GAS.calculator;
+			$('.gas-output-area', ctx).html(html);
 			$('td.float').each(function(){
 				$(this).text(parseFloat($(this).text()).toPrecision(6));
 			});
 			$(document).trigger('showgas');
 		},
 		showOutput : function () {
-			$('#gas-output-area', "div#gas").show();
+			var show = "div#" + GAS.calculator;
+			$('.gas-output-area', show).show();
 			//GAS.resetAllVars();
 		}
 	};
 
 //Click handlers.
 $('a[name="process"]', 'div#gas').click(function () { APP.processGAS(); });
-$('a[name="reset"]', 'div#gas').click(function() {APP.resetGAS(); });
+$('a[name="process"]', 'div#gasrev2').click(function () { APP.processgasrev2(); });
+$('a[name="reset"]', 'div#gas').click(function() { APP.resetGAS(); });
+$('input[name="EMF-check"]').click(function(){
+	var inputs = $('input.gasrev2, select.gasrev2');
+	if ($(this).is(':checked')) {
+		$(inputs).attr('disabled', 'disabled').val('EMF');
+	} else {
+		$(inputs).removeAttr('disabled').val('');
+	}
+});
+
+$('button.badmix-stop').click(function (){ $(document).trigger('resetall'); });
+$('button.badmix-go').click(function (){ $(document).trigger('badmixresume'); });
 
 //Custom event bindings.
+$(document).bind('resetall', GAS.resetAllVars);
 $(document).bind('setmixratio', GAS.setMixRatio);
 $(document).bind('validatemixratio', GAS.validateMixRatio);
 $(document).bind('badmixratio', GAS.showBadMixError);
+$(document).bind('badmixresume', GAS.mixRatioResume);
 $(document).bind('parseinput', GAS.parseInput);
 $(document).bind('setspecfo2', GAS.setSpecfO2);
 $(document).bind('calculatereferencefo2', GAS.calculateReferencefO2);
+$(document).bind('calculatespecimenfo2', GAS.calculateSpecimenfO2);
 $(document).bind('setemfvars', GAS.setEMFVars);
 $(document).bind('calculatedemfdt', GAS.calculatedEMFdT);
 $(document).bind('calculatedfo2dfco2', GAS.calculatedfO2dfCO2);
@@ -327,7 +479,7 @@ $(document).bind('showgas', GAS.showOutput);
 $(document).ready(function(){
 	$('.program-section').hide();
 	$('.program-section:first').show();
-	$('div#gasrev2').show();
+	$('div#ramp, div#gas, div#gasrev2, div#calib3').show();
 	$(document).ready(function(){
 	   $(window).responsiveWeb({
 			applyBodyClasses: true,

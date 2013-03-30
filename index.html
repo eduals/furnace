@@ -90,24 +90,25 @@
         <div id="gasrev2" class="row-fluid form-inline program-section">
             <ul class="span4">
                 <li><p class="calc-header">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</p></li>
-                <li><label for="gas2-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
-                <li><label for="gas2-ref-temp">Reference Temperature <input name="tref" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="gas2-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input" value="1250"/><span class="units">&deg;C</span></label></li>
+                <li><label for="gas2-ref-temp">Reference Temperature <input name="tref" type="text" class="gas-input" value="1200"/><span class="units">&deg;C</span></label></li>
                 <li><label for="gas2-ref-fO2">Reference fO<sub>2</sub> <input name="reffO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
-                        <select name="buffer" class="">
+                        <select name="buffer" class="gasrev2">
                             <option value="IW">IW +</option>
                             <option value="HM">HM +</option>
                             <option value="HM">WM +</option>
                             <option value="NNO">NNO +</option>
                             <option value="QFM">QFM +</option>
                         </select>
-                        <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
+                        <input name="fO2Offset2" type="text" class="input-mini gas-input gasrev2" value="-1"/>
                 </label></li>
-                <li><label for="EMF-check">Use Observed EMF instead of fO<sub>2</sub> <input type="checkbox" name="EMF-check" value="1"></label></li>
-                <li><label for="realEMF">Observed EMF <input name="realEMF" type="text" class="gas-input"/><span class="units">mV</span></label></li>
-                <li><label for="corrEMF">Zirconia cell Correction <input name="corrEMF" type="text" class="gas-input"/><span class="units">mV</span></label></li>
+                <li class="EMF-check"><label for="EMF-check">Use Observed EMF instead of fO<sub>2</sub> <input type="checkbox" name="EMF-check" value="1"></label></li>
+                <li><label for="realEMF">Observed EMF <input name="realEMF" type="text" class="gas-input" value="-914.401"/><span class="units">mV</span></label></li>
+                <li><label for="corrEMF">Zirconia cell Correction <input name="corrEMF" type="text" class="gas-input" value="32"/><span class="units">mV</span></label></li>
                 <li class="buttons"><a href="#" name="process" class="btn btn-warning">CALCULATE</a> <a href="#" name="reset" class="btn btn-danger">RESET</a></li>
             </ul>
+            <div class="span5 offset1 gas-output-area"></div>
         </div>
         <div id="ramp" class="row-fluid form-inline program-section">
             <ul class="span4">
@@ -138,6 +139,7 @@
                 </label></li>
                 <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
             </ul>
+            <div class="span5 offset1 gas-output-area"></div>
         </div>
         <div id="calib3" class="row-fluid program-section form-inline">
             <ul class="span4">
@@ -158,17 +160,20 @@
                 </label></li>
                 <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
             </ul>
+            <div class="span5 offset1 gas-output-area"></div>
         </div><!--/row-->
         <hr>
         <div id="bad-ratio-popup" class="modal hide fade">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h3>Bad gas mix ratio.</h3>
-              </div>
-              <div class="modal-body">
+                <h3>Unrealistic gas mix ratio.</h3>
+            </div>
+            <div class="modal-body">
                 <p>The entered parameters have resulted in a gas mix ratio that is above 100% O<sub>2</sub> or CO<sub>2</sub>.</p>
-                <p>All parameters will be reset for this run.</p>
-              </div>
+                <p>If you choose "Cancel", all calculations will be reset for this run.  Choose "Proceed" to use the unrealistic data.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn badmix-stop" data-dismiss="true" aria-hidden="true">Cancel</button>
+                <button class="btn btn-warning badmix-go" data-dismiss="true">Proceed</button>
             </div>
         </div>
         <footer>
@@ -211,7 +216,7 @@
                 </tr>
                 <tr>
                     <td>dlogfO<sub>2</sub>/dCO<sub>2</sub>%</td>
-                    <td class="float">{{deltafO2deltaCO2}}</td>
+                    <td class="float">{{dfO2dCO2}}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -222,16 +227,53 @@
                 <tr>
                     <td>dEMF/dT (mV)</td>
                     <td>&nbsp;</td>
-                    <td class="float">{{deltaEMFdeltaT}}</td>
+                    <td class="float">{{dEMFdT}}</td>
                 </tr>
                 <tr>
                     <td>dEMF/dfO<sub>2</sub> (mV/.1)</td>
                     <td>&nbsp;</td>
-                    <td class="float">{{deltaEMFdeltafO2}}</td>
+                    <td class="float">{{dEMFdfO2}}</td>
                 </tr>
                 <tr>
                     <td>EMF Correction (mV)</td>
                     <td class="float">{{corrEMF}}</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>Buffer + Offset</td>
+                    <td>{{buffer}} Offset: {{fO2Offset2}}</td>
+                    <td>&nbsp;</td>
+                </tr>
+            </tbody>
+        </table>
+      </script>
+      <script id="gasrev2-output-template" type="text/html">
+        <table class="table table-condensed table-hover table-striped table-bordered">
+            <thead><tr><td></td><td>Sample Furnace</td><td>Reference Furnace</td></tr></thead>
+            <tbody>
+                <tr class="temperature integer">
+                    <td>Temperature (&deg;C)</td>
+                    <td>{{tc}}</td>
+                    <td>{{tref}}</td>
+                </tr>
+                <tr class="fO2">
+                    <td>log fO<sub>2</sub></td>
+                    <td class="float">{{specfO2}}</td>
+                    <td class="float">{{reffO2}}</td>
+                </tr>
+                <tr>
+                    <td>CO<sub>2</sub>%</td>
+                    <td class="float">{{mixRatio}}</td>
+                    <td class=""></td>
+                </tr>
+                <tr>
+                    <td>EMF (mV)</td>
+                    <td>&nbsp;</td>
+                    <td class="float">{{realEMF}}</td>
+                </tr>
+                <tr>
+                    <td>EMF Correction (mV)</td>
+                    <td class="">{{corrEMF}}</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>

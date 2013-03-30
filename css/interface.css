@@ -51,6 +51,14 @@ div.program-section ul li.offset-input select {
 	width: 143px;
 }
 
+div.program-section ul li.EMF-check {
+	padding-right: 35px;
+}
+
+div.program-section ul li.EMF-check input{
+	margin-left:  10px;
+}
+
 div.program-section ul li.buttons {
 	position: relative;
 	padding-right: 35px;
