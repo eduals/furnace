@@ -106,16 +106,19 @@
                 <li class="EMF-check"><label for="EMF-check">Use Observed EMF instead of fO<sub>2</sub> <input type="checkbox" name="EMF-check" value="1"></label></li>
                 <li><label for="realEMF">Observed EMF <input name="realEMF" type="text" class="gas-input" value="-914.401"/><span class="units">mV</span></label></li>
                 <li><label for="corrEMF">Zirconia cell Correction <input name="corrEMF" type="text" class="gas-input" value="32"/><span class="units">mV</span></label></li>
-                <li class="buttons"><a href="#" name="process" class="btn btn-warning">CALCULATE</a> <a href="#" name="reset" class="btn btn-danger">RESET</a></li>
+                <li class="buttons">
+                    <a href="#" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="#" name="reset" class="btn btn-danger">RESET</a>
+                </li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
         </div>
         <div id="ramp" class="row-fluid form-inline program-section">
             <ul class="span4">
                 <li><p class="calc-header">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</p></li>
-                <li><label for="ramp-orig-sample-temp">Original Sample Temperature <input name="ramp-orig-sample-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
-                <li><label for="ramp-final-temp">Final Temperature <input name="ramp-final-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
-                <li><label for="ramp-samp-fO2">Sample fO<sub>2</sub> <input name="ramp-samp-fO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li><label for="tc">Original Sample Temperature <input name="tc" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="tfinal">Final Sample Temperature <input name="tfinal" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="specfO2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
                             <option value="IW">IW +</option>
@@ -126,17 +129,7 @@
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
-                <li><label for="ramp-step-fO2">fO<sub>2</sub> Step Size <input name="ramp-step-fO2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
-                <li class="offset-input"><label for="buffer" class="">Buffer
-                        <select name="buffer" class="">
-                            <option value="IW">IW +</option>
-                            <option value="HM">HM +</option>
-                            <option value="HM">WM +</option>
-                            <option value="NNO">NNO +</option>
-                            <option value="QFM">QFM +</option>
-                        </select>
-                        <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
-                </label></li>
+                <li><label for="rampstep">fO<sub>2</sub> Output Step Size <input name="rampstep" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
                 <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
@@ -147,7 +140,7 @@
                 <li><label for="calib-orig-temp">Original Calibration Temperature <input name="calib-orig-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
                 <li><label for="calib-co2-vol">Gas Mix Percentage of CO<sub>2</sub> <input name="calib-co2-vol" type="text" class="gas-input"/><span class="units">%</span></label></li>
                 <li><label for="calib-final-temp">Final Temperature <input name="calib-final-temp" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
-                <li><label for="calib-step-fO2">fO<sub>2</sub> Step Size <input name="calib-step-fO2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="calib-step-fO2">fO<sub>2</sub> Output Step Size <input name="calib-step-fO2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
                             <option value="IW">IW +</option>
@@ -158,7 +151,10 @@
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
-                <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
+                <li class="buttons">
+                    <a href="#" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="#" name="reset" class="btn btn-danger">RESET</a>
+                </li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
         </div><!--/row-->
