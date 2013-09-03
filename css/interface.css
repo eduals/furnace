@@ -30,12 +30,35 @@ div.program-section {
 	padding: 20px 5px 30px 5px;
 }
 
+div.program-section table thead tr td {
+	font-weight: bold;
+}
+
 div.program-section ul {
 	list-style: none outside;
 }
 
 div.program-section ul li {
 	text-align: right;
+}
+
+div#ramp table ul li {
+	float: left;
+	clear: both;
+	width: 66%;
+	text-align: left;
+}
+
+div#ramp table ul li span.value {
+	float: right;
+}
+
+div#ramp table ul li span.data-label {
+	font-weight: bold;
+}
+
+div#ramp table td.ramp-temp {
+	font-size: 20px;
 }
 
 span.units {
@@ -66,4 +89,8 @@ div.program-section ul li.buttons {
 
 p.calc-header{
 	font-size: 1.2em;
+}
+
+td.pad {
+	padding-left: 29px;
 }

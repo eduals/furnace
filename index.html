@@ -81,8 +81,8 @@
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
                 <li class="buttons">
-                    <a href="#" name="process" class="btn btn-warning">CALCULATE</a>
-                    <a href="#" name="reset" class="btn btn-danger">RESET</a>
+                    <a href="javascript:;" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="javascript:;" name="reset" class="btn btn-danger">RESET</a>
                 </li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
@@ -107,8 +107,8 @@
                 <li><label for="realEMF">Observed EMF <input name="realEMF" type="text" class="gas-input" value="-914.401"/><span class="units">mV</span></label></li>
                 <li><label for="corrEMF">Zirconia cell Correction <input name="corrEMF" type="text" class="gas-input" value="32"/><span class="units">mV</span></label></li>
                 <li class="buttons">
-                    <a href="#" name="process" class="btn btn-warning">CALCULATE</a>
-                    <a href="#" name="reset" class="btn btn-danger">RESET</a>
+                    <a href="javascript:;" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="javascript:;" name="reset" class="btn btn-danger">RESET</a>
                 </li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
@@ -116,8 +116,8 @@
         <div id="ramp" class="row-fluid form-inline program-section">
             <ul class="span4">
                 <li><p class="calc-header">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</p></li>
-                <li><label for="tc">Original Sample Temperature <input name="tc" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
-                <li><label for="tfinal">Final Sample Temperature <input name="tfinal" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
+                <li><label for="tc">Original Sample Temperature <input name="tc" type="text" class="gas-input" value="1200"/><span class="units">&deg;C</span></label></li>
+                <li><label for="tfinal">Final Sample Temperature <input name="tfinal" type="text" class="gas-input" value="1300"/><span class="units">&deg;C</span></label></li>
                 <li><label for="specfO2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
@@ -129,8 +129,10 @@
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
-                <li><label for="rampstep">fO<sub>2</sub> Output Step Size <input name="rampstep" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
-                <li class="buttons"><a href="#" name="process" class="btn btn-warning span3">Calculate</a> <a href="#" name="reset" class="btn btn-danger span3">RESET</a></li>
+                <li><label for="rampstep">fO<sub>2</sub> Output Step Size <input name="rampstep" type="text" class="gas-input"value="100"/><span class="units">&deg;C</span></label></li>
+                <li class="buttons">
+                    <a href="javascript:;" name="process" class="btn btn-warning span3">CALCULATE</a> 
+                    <a href="javascript:;" name="reset" class="btn btn-danger span3">RESET</a></li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
         </div>
@@ -152,8 +154,8 @@
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
                 <li class="buttons">
-                    <a href="#" name="process" class="btn btn-warning">CALCULATE</a>
-                    <a href="#" name="reset" class="btn btn-danger">RESET</a>
+                    <a href="javascript:;" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="javascript:;" name="reset" class="btn btn-danger">RESET</a>
                 </li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
@@ -277,6 +279,31 @@
                     <td>{{buffer}} Offset: {{fO2Offset2}}</td>
                     <td>&nbsp;</td>
                 </tr>
+            </tbody>
+        </table>
+      </script>
+      <script id="ramp-output-template" type="text/html">
+        <table class="table table-condensed table-hover table-striped table-bordered">
+            <thead><tr><td>Sample Furnace</td><td class="pad">Data</td></tr></thead>
+            <tbody>
+                <tr>
+                    <td colspan="2">
+                        <strong>fO<sub>2</sub> Buffer + Offset: </strong>
+                        <span class="value">{{buffer}}&nbsp;{{fO2Offset2}}</span>
+                    </td>
+                </tr>
+                {{#rampData}}
+                <tr>
+                    <td class="ramp-temp">{{temp}}&deg;</td>
+                    <td>
+                        <ul>
+                            <li><span class="data-label">fO2:</span> <span class="value">{{fO2}}</span></li>
+                            <li><span class="data-label">CO<sub>2</sub>%:</span> <span class="value">{{mix}}</span></li>
+                            <li><span class="data-label">Diff:</span> <span class="value">{{diff}}</span></li>
+                        </ul>
+                    </td>
+                </tr>
+               {{/rampData}}
             </tbody>
         </table>
       </script>

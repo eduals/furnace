@@ -37,7 +37,7 @@
 			});
 			this.GAS.startProcess();
 		},
-		processramp : function () {
+		processRamp : function () {
 			var app = this;
 			this.GAS = window.GAS;
 			this.GAS.calculator = "ramp";
@@ -115,7 +115,7 @@
 			"dEMFdfO2" : null,
 			"dEMFdT" : null,
 			"stableC" : false,
-			"rampdata" : [],
+			"rampData" : [],
 			"rampstep" : 0,
 		},
 		resetAllVars : function () {
@@ -127,21 +127,47 @@
 			GAS.lastRun = GAS;
 			$(document).trigger('parseinput');
 		},
+		startRamp : function () {
+			if(GAS.parseInput()){
+				GAS.makeRampData();
+			}
+		},
 		makeRampData : function () {
 			GAS.lastRun = GAS;
 			var t = GAS.tref = GAS.tc;
+			var endrun = false;
 			GAS.stepfO2Flag = false;
-			if (GAS.setMixRatio()){
-				while (t <= GAS.tfinal) {
-					var mix = GAS.calc;
+			var index = 0;
+			while (!endrun) {
+				var fg = GAS.calculatefO2Object(GAS.specfO2, t, GAS.fO2Offset2);
+				var mix = GAS.calcMixRatio(fg.fo2,t);
+				if (GAS.mixRatio == null){
+					GAS.mixRatio = mix.co2;
 				}
-			};
+				var calib = GAS.iteratefO2(fg.fo2, t, GAS.tfinal, mix);
+				console.debug(calib);
+				GAS.rampData[index] = calib;
+				GAS.rampData[index]['temp'] = t;
+				GAS.rampData[index]['diff'] = GAS.mixRatio - calib.mix;
+
+				if (t == GAS.tfinal){
+					endrun = true;
+				} else {
+					t = t + GAS.rampstep;
+				}
+				if (t > GAS.tfinal){
+					t = GAS.tfinal;
+				}
+				index++;
+			}
+			$(document).trigger('outputgas');
 		},
 		parseInput : function () {
 			GAS.tc = parseFloat(GAS.tc);
 			GAS.tref = parseFloat(GAS.tref);
 			GAS.corrEMF = parseFloat(GAS.corrEMF);
 			GAS.tfinal = parseFloat(GAS.tfinal);
+			GAS.rampstep = parseInt(GAS.rampstep);
 			if (GAS.calculator == "gas"){
 				GAS.parsefO2Input("specfO2");
 			}
@@ -161,7 +187,7 @@
 			if (GAS.calculator !== "ramp") {
 				$(document).trigger('setspecfo2');
 			} else {
-				$(document).trigger('makerampdata');
+				return true;
 			}
 		},
 		parsefO2Input : function (fo2) {
@@ -236,51 +262,92 @@
 			var adjTC = GAS.tc + 273;
 			switch (GAS.buffer) {
 			case "IW":
-				GAS.fO2Offset2 = GAS[fo2] - (6.57 - (27215 / adjTC));
+				fo2off = GAS[fo2] - (6.57 - (27215 / adjTC));
 				break;
 			case "WM":
-				GAS.fO2Offset2 = GAS[fo2] - (13.12 - (32730 / adjTC));
+				fo2off = GAS[fo2] - (13.12 - (32730 / adjTC));
 				break;
 			case "HM":
-				GAS.fO2Offset2 = GAS[fo2] - (13.966 - (24634 / adjTC));
+				fo2off = GAS[fo2] - (13.966 - (24634 / adjTC));
 				break;
 			case "QFM":
-				GAS.fO2Offset2 = GAS[fo2] - (9 - (25738 / adjTC));
+				fo2off = GAS[fo2] - (9 - (25738 / adjTC));
 				break;
 			case "NNO":
-				GAS.fO2Offset2 = GAS[fo2] - (9.359999 - (24930 / adjTC));
+				fo2off = GAS[fo2] - (9.359999 - (24930 / adjTC));
 				break;
 			default:
-				GAS.fO2Offset2 = GAS[fo2] - (6.57 - (27215 / adjTC));
+				fo2off = GAS[fo2] - (6.57 - (27215 / adjTC));
 				break;
 			}
-			GAS.logfO2 = GAS[fo2];
-			$(document).trigger('setmixratio');
+			if (GAS.calculator !== "ramp"){
+				GAS.fO2Offset2 = fo2off;
+				GAS.logfO2 = GAS[fo2];
+				$(document).trigger('setmixratio');
+			} else {
+				return fo2off;
+			}
 		},
-		calculatefO2 : function (temp) {
-			var adjTC = temp + 273;
-			switch (GAS.buffer) {
-			case "IW":
-				GAS.fO2Offset2 = GAS[fo2] - (6.57 - (27215 / adjTC));
-				break;
-			case "WM":
-				GAS.fO2Offset2 = GAS[fo2] - (13.12 - (32730 / adjTC));
-				break;
-			case "HM":
-				GAS.fO2Offset2 = GAS[fo2] - (13.966 - (24634 / adjTC));
-				break;
-			case "QFM":
-				GAS.fO2Offset2 = GAS[fo2] - (9 - (25738 / adjTC));
-				break;
-			case "NNO":
-				GAS.fO2Offset2 = GAS[fo2] - (9.359999 - (24930 / adjTC));
-				break;
-			default:
-				GAS.fO2Offset2 = GAS[fo2] - (6.57 - (27215 / adjTC));
-				break;
+		calculatefO2Object : function (fo2, temp, offset) {
+			var adjTC = temp + 273; var _fo2 = undefined; ret = {};
+			if(fo2 !== "" && offset !== 0){
+				switch (GAS.buffer) {
+				case "IW":
+					offset = fo2 - (6.57 - (27215 / adjTC));
+					break;
+				case "WM":
+					offset = fo2 - (13.12 - (32730 / adjTC));
+					break;
+				case "HM":
+					offset = fo2 - (13.966 - (24634 / adjTC));
+					break;
+				case "QFM":
+					offset = fo2 - (9 - (25738 / adjTC));
+					break;
+				case "NNO":
+					offset = fo2 - (9.359999 - (24930 / adjTC));
+					break;
+				case "MANUAL":
+					offset = GAS.calculatefO2Offset(fo2);
+					break;
+				default:
+					offset = fo2 - (6.57 - (27215 / adjTC));
+					break;
+				}
+			} else {
+				switch (GAS.buffer) {
+					case "IW":
+						_fo2 = (6.57 - (27215 / adjTC)) + offset;
+						break;
+					case "WM":
+						_fo2 = (13.12 - (32730 / adjTC)) + offset;
+						break;
+					case "HM":
+						_fo2 = (13.966 - (24634 / adjTC)) + offset;
+						break;
+					case "QFM":
+						_fo2 = (9.0 - (25738 / adjTC)) + offset;
+						break;
+					case "NNO":
+						_fo2 = (9.359999 - (24930 / adjTC)) + GAS.fO2Offset2;
+						break;
+					case "MANUAL":
+						_fo2 = fo2;
+						break;
+					case "EMF":
+						GAS.setfO2byEMF();
+						break;
+					default:
+						break;
+				}
 			}
-			GAS.logfO2 = GAS[fo2];
-			$(document).trigger('setmixratio');
+			if (GAS.calculator !== "ramp"){
+				$(document).trigger('setMixRatio');
+			} else {
+				ret.fo2 = _fo2;
+				ret.fo2Off = offset;
+				return ret;
+			}
 		},
 		setfO2byEMF : function () {
 			GAS.idealEMF = GAS.realEMF - GAS.corrEMF;
@@ -366,7 +433,9 @@
 			var dVolCO2 = 100 / (1 + GAS.RM(k1, (fO2 + 0.1))) - 100 / (1 + GAS.RM(k1, (fO2 - 0.1))) / 2;
 			// Set carbon stability notification - if carbon will precipitate, set to true to display message
 			if (Math.pow(10, fO2) < (k2 * GAS.fCO2)) { GAS.stableC = true; }
-			var ret = {}; ret.mix = GAS.mixRatio; ret.co2 = volCO2; ret.dco2 = dVolCO2; ret.fO2 = fO2;
+
+			var ret = {}; ret.co2 = volCO2; ret.dco2 = dVolCO2; ret.fO2 = fO2; ret.precipC = GAS.stableC;
+			ret.mix = (ret.co2 < 100.0)? volCO2 : 'bad';
 			return ret;
 		},
 		validateMixRatio : function () {
@@ -446,14 +515,13 @@
 			GAS.dCO2dfO2spec = GAS.dVolCO2;
 			$(document).trigger('outputgas');
 		},
-		iteratefO2 : function (fO2, temp) {
+		iteratefO2 : function (fO2, temp, tfinal, mix) {
 			var tDelta = tRatio = 1;
-			//if (GAS.tc <= GAS.tref) { GAS.stepfO2 = -1; }
-			GAS.stepfO2Flag = false;
-			var step = 1; var done = false; var i = 1;
+			var step = 1; var i = 1; var _fo2 = fO2;
 			while (Math.abs(tDelta) > 0.001) {
-				if (GAS.tref < GAS.tc) {
-					tRatio = GAS.calcMixRatio(fO2 - (step * i), temp);
+				if (tfinal < temp) {
+					_fo2 = fO2 - (step * i);
+					tRatio = GAS.calcMixRatio(_fo2, temp);
 					tDelta = GAS.calcDeltaRatio(tRatio);
 					if (tDelta < 0) {
 						i++;
@@ -462,7 +530,8 @@
 						i = 1;
 					}
 				} else {
-					tRatio = GAS.calcMixRatio(fO2 + (step * i), temp);
+					_fo2 = fO2 + (step * i);
+					tRatio = GAS.calcMixRatio(_fo2, temp);
 					tDelta = GAS.calcDeltaRatio(tRatio);
 					if (tDelta > 0) {
 						i++;
@@ -472,10 +541,15 @@
 					}
 				}
 			}
-			return {"fO2" : tRatio.fO2, "ratio": GAS.mixRatio };
+			if (GAS.calculator !== "ramp"){
+				return {"fO2" : tRatio.fO2, "ratio": GAS.mixRatio };
+			} else {
+				return tRatio;
+			}
 		},
 		calcDeltaRatio : function (obj){
-			return obj.mix - obj.co2;
+			return GAS.mixRatio - obj.co2;
+			//return obj.mix - obj.co2;
 		},
 		calculateDeltaRatio : function () {
 			var dR = GAS.mixRatio - GAS.volCO2;
@@ -546,7 +620,8 @@
 //Click handlers.
 $('a[name="process"]', 'div#gas').click(function () { APP.processGAS(); });
 $('a[name="process"]', 'div#gasrev2').click(function () { APP.processgasrev2(); });
-$('a[name="reset"]', 'div#gas').click(function() { APP.resetGAS(); });
+$('a[name="reset"]').click(function() { APP.resetGAS(); });
+$('a[name="process"]', 'div#ramp').click(function () { APP.processRamp(); });
 $('input[name="EMF-check"]').click(function(){
 	var inputs = $('input.gasrev2, select.gasrev2');
 	if ($(this).is(':checked')) {
@@ -578,9 +653,10 @@ $(document).bind('showgas', GAS.showOutput);
 
 //UI Section
 $(document).ready(function(){
-	$('.program-section').hide();
-	$('.program-section:first').show();
-	$('div#ramp, div#gas, div#gasrev2, div#calib3').show();
+	//$('.program-section').hide();
+	//$('.program-section:first').show();
+	//$('div#ramp, div#gas, div#gasrev2, div#calib3').show();
+	$("div#ramp").show();
 	$(document).ready(function(){
 	   $(window).responsiveWeb({
 			applyBodyClasses: true,
