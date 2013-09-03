@@ -131,8 +131,9 @@
                 </label></li>
                 <li><label for="rampstep">fO<sub>2</sub> Output Step Size <input name="rampstep" type="text" class="gas-input"value="100"/><span class="units">&deg;C</span></label></li>
                 <li class="buttons">
-                    <a href="javascript:;" name="process" class="btn btn-warning span3">CALCULATE</a> 
-                    <a href="javascript:;" name="reset" class="btn btn-danger span3">RESET</a></li>
+                    <a href="javascript:;" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="javascript:;" name="reset" class="btn btn-danger">RESET</a>
+                </li>
             </ul>
             <div class="span5 offset1 gas-output-area"></div>
         </div>
@@ -167,15 +168,13 @@
             </div>
             <div class="modal-body">
                 <p>The entered parameters have resulted in a gas mix ratio that is above 100% O<sub>2</sub> or CO<sub>2</sub>.</p>
-                <p>If you choose "Cancel", all calculations will be reset for this run.  Choose "Proceed" to use the unrealistic data.</p>
             </div>
             <div class="modal-footer">
-                <button class="btn badmix-stop" data-dismiss="true" aria-hidden="true">Cancel</button>
-                <button class="btn btn-warning badmix-go" data-dismiss="true">Proceed</button>
+                <button class="btn btn-warning" data-dismiss="modal">OK</button>
             </div>
         </div>
         <footer>
-          <p>&copy; elsewares - 2012</p>
+          <p>&copy; 2013 :: elsewar.es & b.e.hollenbeck</p>
         </footer>
       </div><!--/.fluid-container-->
 
@@ -297,9 +296,9 @@
                     <td class="ramp-temp">{{temp}}&deg;</td>
                     <td>
                         <ul>
-                            <li><span class="data-label">fO2:</span> <span class="value">{{fO2}}</span></li>
-                            <li><span class="data-label">CO<sub>2</sub>%:</span> <span class="value">{{mix}}</span></li>
-                            <li><span class="data-label">Diff:</span> <span class="value">{{diff}}</span></li>
+                            <li><span class="data-label">fO2:</span> <span class="value float">{{fO2}}</span></li>
+                            <li><span class="data-label">CO<sub>2</sub>%:</span> <span class="value float">{{mix}}</span></li>
+                            <li><span class="data-label">Diff:</span> <span class="value float">{{diff}}</span></li>
                         </ul>
                     </td>
                 </tr>

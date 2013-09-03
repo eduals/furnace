@@ -141,11 +141,15 @@
 			while (!endrun) {
 				var fg = GAS.calculatefO2Object(GAS.specfO2, t, GAS.fO2Offset2);
 				var mix = GAS.calcMixRatio(fg.fo2,t);
+				if(!GAS.validateRatio(mix.co2)){
+					$(document).trigger('badmixratio');
+					return false;
+				}
 				if (GAS.mixRatio == null){
 					GAS.mixRatio = mix.co2;
 				}
 				var calib = GAS.iteratefO2(fg.fo2, t, GAS.tfinal, mix);
-				console.debug(calib);
+				//console.debug(calib);
 				GAS.rampData[index] = calib;
 				GAS.rampData[index]['temp'] = t;
 				GAS.rampData[index]['diff'] = GAS.mixRatio - calib.mix;
@@ -434,23 +438,32 @@
 			// Set carbon stability notification - if carbon will precipitate, set to true to display message
 			if (Math.pow(10, fO2) < (k2 * GAS.fCO2)) { GAS.stableC = true; }
 
-			var ret = {}; ret.co2 = volCO2; ret.dco2 = dVolCO2; ret.fO2 = fO2; ret.precipC = GAS.stableC;
-			ret.mix = (ret.co2 < 100.0)? volCO2 : 'bad';
+			var ret = {}; 
+			ret.co2 = volCO2; 
+			ret.dco2 = dVolCO2; 
+			ret.fO2 = fO2;
+			ret.precipC = GAS.stableC;
+			ret.mix = volCO2;
+
 			return ret;
 		},
 		validateMixRatio : function () {
-			if (GAS.volCO2 < 100.0) {
+			if (GAS.volCO2 < 100.0 && GAS.volCO2 > 0) {
 				GAS.mixRatio = GAS.volCO2;
 				GAS.dCO2dfO2ref = GAS.dVolCO2;
 				if (GAS.calculator == "gasrev2") {
 					$(document).trigger('calculatespecimenfo2');
-				} else {
+				}
+				if (GAS.calculator == "gas") {
 					$(document).trigger('calculatereferencefo2');
 				}
 			} else {
 				GAS.continueRatio = false;
 				$(document).trigger('badmixratio');
 			}
+		},
+		validateRatio : function (ratio) {
+			return (ratio > 0 && ratio < 100.0);
 		},
 		calculateReferencefO2 : function () {
 			var tDelta = tRatio = 1;
@@ -605,8 +618,9 @@
 			var html = Mustache.render(tpl, GAS);
 			var ctx = "div#" + GAS.calculator;
 			$('.gas-output-area', ctx).html(html);
-			$('td.float').each(function(){
+			$('.float').each(function(){
 				$(this).text(parseFloat($(this).text()).toPrecision(6));
+				console.log($(this).text());
 			});
 			$(document).trigger('showgas');
 		},
@@ -618,6 +632,11 @@
 	};
 
 //Click handlers.
+$('.program-button').click(function(){
+	var rel = $(this).attr('rel');
+	$('.program-section').hide();
+	$('div#' + rel).show();
+});
 $('a[name="process"]', 'div#gas').click(function () { APP.processGAS(); });
 $('a[name="process"]', 'div#gasrev2').click(function () { APP.processgasrev2(); });
 $('a[name="reset"]').click(function() { APP.resetGAS(); });
@@ -631,7 +650,14 @@ $('input[name="EMF-check"]').click(function(){
 	}
 });
 
-$('button.badmix-stop').click(function (){ $(document).trigger('resetall'); });
+$('button.badmix-stop').click(function (){
+	$('.program-section').each(function () {
+		if($(this).is('visible')){
+			$(this).find('.gas-output-area').empty();
+		}
+	});
+	$(document).trigger('resetall'); 
+})
 $('button.badmix-go').click(function (){ $(document).trigger('badmixresume'); });
 
 //Custom event bindings.
@@ -653,10 +679,10 @@ $(document).bind('showgas', GAS.showOutput);
 
 //UI Section
 $(document).ready(function(){
-	//$('.program-section').hide();
+	$('.program-section').hide();
 	//$('.program-section:first').show();
 	//$('div#ramp, div#gas, div#gasrev2, div#calib3').show();
-	$("div#ramp").show();
+	//$("div#ramp").show();
 	$(document).ready(function(){
 	   $(window).responsiveWeb({
 			applyBodyClasses: true,
@@ -666,7 +692,7 @@ $(document).ready(function(){
 			applyBrowserVersion: false,
 			manipulateDesign: false,
 			rearrangeObjects: false,
-			debug: true
+			debug: false
 		});
 	});
 });
