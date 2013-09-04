@@ -61,6 +61,16 @@ div#ramp table td.ramp-temp {
 	font-size: 20px;
 }
 
+div.program-section ul li.fo2-check {
+	padding-right: 34px;
+}
+
+div.program-section ul li.fo2-check input {
+	margin-left: 10px;
+	position: relative;
+	top: -3px;
+}
+
 span.units {
 	display: inline-block;
 	width: 35px;

@@ -4,7 +4,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
-        <title>NASA Furnace App</title>
+        <title>JSC Gas-Mixing Furnace App</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="NASA Gas-Mixing Furnace App">
         <meta name="author" content="elsewares & brian e hollenbeck">
@@ -37,7 +37,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="#">JPL Gas-Mixing Furnace App (beta)</a>
+            <a class="brand" href="#">JSC Gas-Mixing Furnace App (beta)</a>
             <div class="nav-collapse collapse">
               <ul class="nav">
                 <!--<li class="active"><a href="#" rel="main">HOME</a></li>
@@ -53,7 +53,7 @@
       <div class="container-fluid">
         <div class="row-fluid">
             <div id="main" class="">
-                <h3>NASA CO/CO<sub>2</sub> Gas-Mixing Furnace Parameter Program</h3>
+                <h3>Gas-Mixing Furnace Parameter Program</h3>
                 <p class="text-warning">For extreme ranges other than 1000&deg;C &lt; T &lt; 1400&deg;C or -6 &lt; log fO<sub>2</sub> &lt; -16, the zirconia cell may become non-ideal.</p>
                 <ul>
                     <li><h3 class="btn btn-default gas-btn program-button" rel="gas">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</h3></li>
@@ -69,17 +69,18 @@
                 <li><label for="gas-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input" value="1250" /><span class="units">&deg;C</span></label></li>
                 <li><label for="gas-samp-temp">Reference Temperature <input name="tref" type="text" class="gas-input" value="1200" /><span class="units">&deg;C</span></label></li>
                 <li><label for="gas-samp-temp">Zirconia Cell Correction <input name="corrEMF" type="text" class="gas-input" value="32" /><span class="units">mV</span></label></li>
-                <li><label for="gas-samp-fo2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li class="fo2-check"><label for="fo2-check">Use manual fO<sub>2</sub> instead of buffer + offset.<input type="checkbox" name="fo2-check" value="1"></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
-                            <option value="IW">IW +</option>
-                            <option value="HM">HM +</option>
-                            <option value="HM">WM +</option>
-                            <option value="NNO">NNO +</option>
-                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW</option>
+                            <option value="HM">HM</option>
+                            <option value="HM">WM</option>
+                            <option value="NNO">NNO</option>
+                            <option value="QFM">QFM</option>
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
+                <li class="fo2-manual"><label for="gas-samp-fo2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li class="buttons">
                     <a href="javascript:;" name="process" class="btn btn-warning">CALCULATE</a>
                     <a href="javascript:;" name="reset" class="btn btn-danger">RESET</a>
@@ -92,17 +93,18 @@
                 <li><p class="calc-header">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</p></li>
                 <li><label for="gas2-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input" value="1250"/><span class="units">&deg;C</span></label></li>
                 <li><label for="gas2-ref-temp">Reference Temperature <input name="tref" type="text" class="gas-input" value="1200"/><span class="units">&deg;C</span></label></li>
-                <li><label for="gas2-ref-fO2">Reference fO<sub>2</sub> <input name="reffO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li class="fo2-check"><label for="fo2-check">Use manual fO<sub>2</sub> instead of buffer + offset.<input type="checkbox" name="fo2-check" value="1"></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="gasrev2">
-                            <option value="IW">IW +</option>
-                            <option value="HM">HM +</option>
-                            <option value="HM">WM +</option>
-                            <option value="NNO">NNO +</option>
-                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW</option>
+                            <option value="HM">HM</option>
+                            <option value="HM">WM</option>
+                            <option value="NNO">NNO</option>
+                            <option value="QFM">QFM</option>
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input gasrev2" value="-1"/>
                 </label></li>
+                <li class="fo2-manual"><label for="gas2-ref-fO2">Reference fO<sub>2</sub> <input name="reffO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li class="EMF-check"><label for="EMF-check">Use Observed EMF instead of fO<sub>2</sub> <input type="checkbox" name="EMF-check" value="1"></label></li>
                 <li><label for="realEMF">Observed EMF <input name="realEMF" type="text" class="gas-input" value="-914.401"/><span class="units">mV</span></label></li>
                 <li><label for="corrEMF">Zirconia cell Correction <input name="corrEMF" type="text" class="gas-input" value="32"/><span class="units">mV</span></label></li>
@@ -118,17 +120,18 @@
                 <li><p class="calc-header">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</p></li>
                 <li><label for="tc">Original Sample Temperature <input name="tc" type="text" class="gas-input" value="1200"/><span class="units">&deg;C</span></label></li>
                 <li><label for="tfinal">Final Sample Temperature <input name="tfinal" type="text" class="gas-input" value="1300"/><span class="units">&deg;C</span></label></li>
-                <li><label for="specfO2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li class="fo2-check"><label for="fo2-check">Use manual fO<sub>2</sub> instead of buffer + offset.<input type="checkbox" name="fo2-check" value="1"></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
-                            <option value="IW">IW +</option>
-                            <option value="HM">HM +</option>
-                            <option value="HM">WM +</option>
-                            <option value="NNO">NNO +</option>
-                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW</option>
+                            <option value="HM">HM</option>
+                            <option value="HM">WM</option>
+                            <option value="NNO">NNO</option>
+                            <option value="QFM">QFM</option>
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
+                <li class="fo2-manual"><label for="specfO2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li><label for="rampstep">fO<sub>2</sub> Output Step Size <input name="rampstep" type="text" class="gas-input"value="100"/><span class="units">&deg;C</span></label></li>
                 <li class="buttons">
                     <a href="javascript:;" name="process" class="btn btn-warning">CALCULATE</a>
@@ -146,11 +149,11 @@
                 <li><label for="calib-step-fO2">fO<sub>2</sub> Output Step Size <input name="calib-step-fO2" type="text" class="gas-input"/><span class="units">&deg;C</span></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
-                            <option value="IW">IW +</option>
-                            <option value="HM">HM +</option>
-                            <option value="HM">WM +</option>
-                            <option value="NNO">NNO +</option>
-                            <option value="QFM">QFM +</option>
+                            <option value="IW">IW</option>
+                            <option value="HM">HM</option>
+                            <option value="HM">WM</option>
+                            <option value="NNO">NNO</option>
+                            <option value="QFM">QFM</option>
                         </select>
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>

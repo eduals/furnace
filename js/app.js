@@ -157,10 +157,17 @@
 				if (t == GAS.tfinal){
 					endrun = true;
 				} else {
-					t = t + GAS.rampstep;
-				}
-				if (t > GAS.tfinal){
-					t = GAS.tfinal;
+					if(GAS.tfinal > GAS.tc){
+						t = t + GAS.rampstep;
+						if (t > GAS.tfinal){
+							t = GAS.tfinal;
+						}
+					} else {
+						t = t - GAS.rampstep;
+						if(t < GAS.tfinal){
+							t = GAS.tfinal;
+						}
+					}
 				}
 				index++;
 			}
@@ -530,28 +537,33 @@
 		},
 		iteratefO2 : function (fO2, temp, tfinal, mix) {
 			var tDelta = tRatio = 1;
-			var step = 1; var i = 1; var _fo2 = fO2;
+			var step = 1; var stepTotal = 0; var _fo2 = fO2; var lastDelta = 0;
+			//step = (tfinal > temp)? -(step) : step;
+			stepTotal = step;
 			while (Math.abs(tDelta) > 0.001) {
-				if (tfinal < temp) {
-					_fo2 = fO2 - (step * i);
+				if (tfinal >= temp) {
+					_fo2 = fO2 - stepTotal;
 					tRatio = GAS.calcMixRatio(_fo2, temp);
 					tDelta = GAS.calcDeltaRatio(tRatio);
 					if (tDelta < 0) {
-						i++;
-					} else {
 						step = step / 2;
-						i = 1;
+						stepTotal += step;
+					} else {
+						stepTotal -= step;
 					}
-				} else {
-					_fo2 = fO2 + (step * i);
+					lastDelta = tDelta;
+				} else if (tfinal < temp) {
+					_fo2 = fO2 + stepTotal;
 					tRatio = GAS.calcMixRatio(_fo2, temp);
 					tDelta = GAS.calcDeltaRatio(tRatio);
 					if (tDelta > 0) {
-						i++;
-					} else {
 						step = step / 2;
-						i = 1;
+						stepTotal += step;
+					} else {
+						stepTotal -= step;
 					}
+
+					lastDelta = tDelta;
 				}
 			}
 			if (GAS.calculator !== "ramp"){
@@ -650,6 +662,17 @@ $('input[name="EMF-check"]').click(function(){
 	}
 });
 
+$('input[name="fo2-check"]').click(function(){
+	var li = $(this).parents('li');
+	if ($(this).is(':checked')){
+		$(li).siblings('li.fo2-manual').show();
+		$(li).siblings('li.offset-input').hide();
+	} else {
+		$(li).siblings('li.fo2-manual').hide();
+		$(li).siblings('li.offset-input').show();
+	}
+});
+
 $('button.badmix-stop').click(function (){
 	$('.program-section').each(function () {
 		if($(this).is('visible')){
@@ -657,7 +680,8 @@ $('button.badmix-stop').click(function (){
 		}
 	});
 	$(document).trigger('resetall'); 
-})
+});
+
 $('button.badmix-go').click(function (){ $(document).trigger('badmixresume'); });
 
 //Custom event bindings.
@@ -680,6 +704,7 @@ $(document).bind('showgas', GAS.showOutput);
 //UI Section
 $(document).ready(function(){
 	$('.program-section').hide();
+	$('li.fo2-manual').hide();
 	//$('.program-section:first').show();
 	//$('div#ramp, div#gas, div#gasrev2, div#calib3').show();
 	//$("div#ramp").show();
