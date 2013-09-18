@@ -703,21 +703,27 @@ $(document).bind('showgas', GAS.showOutput);
 
 //UI Section
 $(document).ready(function(){
+	$(window).bind("respond", phoneResponse);
 	$('.program-section').hide();
 	$('li.fo2-manual').hide();
 	//$('.program-section:first').show();
 	//$('div#ramp, div#gas, div#gasrev2, div#calib3').show();
 	//$("div#ramp").show();
-	$(document).ready(function(){
-	   $(window).responsiveWeb({
-			applyBodyClasses: true,
-			applyResolution: true,
-			applyPlatform: false,
-			applyBrowser: false,
-			applyBrowserVersion: false,
-			manipulateDesign: false,
-			rearrangeObjects: false,
-			debug: false
-		});
-	});
+	$(window).responsiveWeb({
+		applyBodyClasses: true,
+		applyResolution: true,
+		applyPlatform: false,
+		applyBrowser: false,
+		applyBrowserVersion: false,
+		manipulateDesign: false,
+		rearrangeObjects: false,
+		debug: false
+	}).trigger('respond');
 });
+
+function phoneResponse(){
+	if($('body').hasClass('phone tablet')){
+		$('ul.span4').removeClass('span4');
+		$('div.gas-output-area').removeClass('span5');
+	}
+}

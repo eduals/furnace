@@ -3,8 +3,17 @@ body {
 	font-weight: 400;
 }
 
-.input-micro, input.input-micro {
+input.input-mini, .input-mini, .input-micro, input.input-micro {
 	width: 30px;
+}
+
+div#main {
+	padding-top: 60px;
+}
+
+p.warning {
+	text-align: center;
+	clear: both;
 }
 
 div#main ul{
@@ -12,14 +21,24 @@ div#main ul{
 	list-style: none inside;
 }
 
-body.desktop h3.program-button{
+body.desktop a.program-button{
 	width: 400px;
 	text-align: center;
+	margin-bottom: 10px;
 }
 
-body.tablet h3.program-button,
-body.phone h3.program-button{
+body.phone div.navbar-fixed-top {
+	position: absolute !important;
+	top: 0px;
+	width: 100% !important;
+	left: 20px !important;
+}
+
+body.tablet a.program-button,
+body.phone a.program-button{
+	width: 95%;
 	text-align: center;
+	margin-bottom: 5px;
 }
 
 div.program-section {
@@ -40,6 +59,14 @@ div.program-section ul {
 
 div.program-section ul li {
 	text-align: right;
+}
+
+div.program-section input[type="text"]{
+	width: 175px;
+}
+
+div.program-section input[type="text"].input-mini {
+	width: 30px;
 }
 
 div#ramp table ul li {
