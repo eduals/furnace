@@ -12,6 +12,7 @@
         <!-- Le styles -->
         <link href="css/bootstrap.css" rel="stylesheet">
         <link href="css/bootstrap-responsive.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
         <link href="css/interface.css" rel="stylesheet">
         <style type="text/css">
           body {
@@ -36,7 +37,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="#">JSC Gas-Mixing Furnace (beta)</a>
+            <a class="brand" href="#">JSC ARES Gas-Mixing Furnace App :: BETA v0.1.5</a>
             <div class="nav-collapse collapse">
               <ul class="nav">
                 <!--<li class="active"><a href="#" rel="main">HOME</a></li>
@@ -52,15 +53,18 @@
       <div class="container-fluid">
         <div class="row-fluid">
             <div id="main" class="">
-		<div class="row-fluid">
-                	<p class="span4 warning text-warning">For ranges other than 1000&deg;C &lt; T &lt; 1400&deg;C or -6 &lt; log fO<sub>2</sub> &lt; -16,<br />the zirconia cell may become non-ideal.</p>
-                </div>
-		<ul>
-                    <li><a href="#gas" class="btn btn-default gas-btn program-button" rel="gas">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</a></li>
-                    <li><a href="#gasrev2" class="btn btn-default gasrev2-btn program-button" rel="gasrev2">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</a></li>
-                    <li><a href="#ramp" class="btn btn-default ramp-btn program-button" rel="ramp">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</a></li>
-                    <li><a href="calib3" class="btn btn-warning calib3-btn program-button" rel="//calib3">Determine EMF fO<sub>2</sub> and buffer + offset for a fixed gas mixture and temperature range. [DISABLED]</a></li>
-                </ul>
+		      <div class="row-fluid">
+                <p class="span4 warning text-warning">For extreme ranges other than<br />
+                    <span class="red">1000&deg;C &lt; T &lt; 1400&deg;C or -6 &lt; log fO<sub>2</sub> &lt; -16</span>,<br />
+                    the zirconia cell may become non-ideal.
+                </p>
+              </div>
+		      <ul>
+                <li><a href="#gas" class="btn btn-default gas-btn program-button" rel="gas">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</a></li>
+                <li><a href="#gasrev2" class="btn btn-default gasrev2-btn program-button" rel="gasrev2">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</a></li>
+                <li><a href="#ramp" class="btn btn-default ramp-btn program-button" rel="ramp">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</a></li>
+                <li><a href="calib3" class="btn btn-warning calib3-btn program-button" rel="//calib3">Determine EMF fO<sub>2</sub> and buffer + offset for a fixed gas mixture and temperature range. [DISABLED]</a></li>
+              </ul>
             </div>
         </div>
         <div id="gas" class="row-fluid form-inline program-section">
@@ -118,8 +122,8 @@
         <div id="ramp" class="row-fluid form-inline program-section">
             <ul class="span4">
                 <li><p class="calc-header">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</p></li>
-                <li><label for="tc">Original Sample Temperature <input name="tc" type="text" class="gas-input" placeholder="1200" value=""/><span class="units">&deg;C</span></label></li>
-                <li><label for="tfinal">Final Sample Temperature <input name="tfinal" type="text" class="gas-input" placeholder="1300" value=""/><span class="units">&deg;C</span></label></li>
+                <li><label for="tc">Start Sample Temperature <input name="tc" type="text" class="gas-input" value="1200"/><span class="units">&deg;C</span></label></li>
+                <li><label for="tfinal">Final Sample Temperature <input name="tfinal" type="text" class="gas-input" value="1300"/><span class="units">&deg;C</span></label></li>
                 <li class="fo2-check"><label for="fo2-check">Use manual fO<sub>2</sub> instead of buffer + offset.<input type="checkbox" name="fo2-check" value="1"></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
@@ -184,13 +188,6 @@
       <!-- Le javascript ================================================== -->
       <!-- Placed at the end of the document so the pages load faster -->
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-      <script src="//ajax.googleapis.com/ajax/libs/webfont/1.1.0/webfont.js">
-        WebFontConfig = {
-            google: {
-                families: [ 'Titillium Web:regular,bold,200,400,700' ]
-            }
-        };
-      </script>
       <script src="./js/jquery.responsiveWeb.js"></script>
       <script src="./js/bootstrap.js"></script>
       <script src="./js/mustache.js"></script>

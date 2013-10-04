@@ -6,8 +6,12 @@
 }
 
 body {
-	font-family: "Titillium Web" !important;
+	font-family: "Open Sans", sans-serif !important;
 	font-weight: 400;
+}
+
+.red {
+    color: red;
 }
 
 input.input-mini, .input-mini, .input-micro, input.input-micro {
