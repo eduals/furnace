@@ -1,3 +1,10 @@
+@media screen and (-webkit-min-device-pixel-ratio:0) { 
+  select:focus, textarea:focus, input:focus {
+   font-size: 16px;
+   background:#eee;
+  }
+}
+
 body {
 	font-family: "Titillium Web" !important;
 	font-weight: 400;
@@ -5,6 +12,12 @@ body {
 
 input.input-mini, .input-mini, .input-micro, input.input-micro {
 	width: 30px;
+}
+
+input[type='text'],input[type='number'],textarea {font-size:16px;}
+
+body.phone a.brand {
+	font0size: 16px;
 }
 
 div#main {
@@ -126,6 +139,11 @@ div.program-section ul li.buttons {
 
 p.calc-header{
 	font-size: 1.2em;
+}
+
+body.phone p.calc-header {
+	font-size: 1em;
+	font-weight: bold;
 }
 
 td.pad {
