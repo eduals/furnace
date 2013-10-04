@@ -4,18 +4,18 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
-        <title>JSC Gas-Mixing Furnace App</title>
+        <title>JSC Gas-Mixing Furnace Parameter App</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="NASA Gas-Mixing Furnace App">
-        <meta name="author" content="elsewares & brian e hollenbeck">
+        <meta name="description" content="NASA Johnson Space Center ARES Gas-Mixing Furnace App">
+        <meta name="author" content="elsewares & brian e hollenbeck & qa:lisa danielson">
 
         <!-- Le styles -->
         <link href="css/bootstrap.css" rel="stylesheet">
         <link href="css/bootstrap-responsive.css" rel="stylesheet">
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
         <link href="css/interface.css" rel="stylesheet">
         <style type="text/css">
           body {
-            padding-top: 60px;
             padding-bottom: 40px;
           }
           .sidebar-nav {
@@ -37,7 +37,7 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="#">JSC Gas-Mixing Furnace App (beta)</a>
+            <a class="brand" href="#">JSC ARES Gas-Mixing Furnace App :: BETA v0.1.5</a>
             <div class="nav-collapse collapse">
               <ul class="nav">
                 <!--<li class="active"><a href="#" rel="main">HOME</a></li>
@@ -53,22 +53,26 @@
       <div class="container-fluid">
         <div class="row-fluid">
             <div id="main" class="">
-                <h3>Gas-Mixing Furnace Parameter Program</h3>
-                <p class="text-warning">For extreme ranges other than 1000&deg;C &lt; T &lt; 1400&deg;C or -6 &lt; log fO<sub>2</sub> &lt; -16, the zirconia cell may become non-ideal.</p>
-                <ul>
-                    <li><a href="#gas" class="btn btn-default gas-btn program-button" rel="gas">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</a></li>
-                    <li><a href="#gasrev2" class="btn btn-default gasrev2-btn program-button" rel="gasrev2">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</a></li>
-                    <li><a href="#ramp" class="btn btn-default ramp-btn program-button" rel="ramp">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</a></li>
-                    <li><a href="#calib3" class="btn btn-warning calib3-btn program-button" rel="//calib3">Determine EMF fO<sub>2</sub> and buffer + offset for a fixed gas mixture and temperature range. [DISABLED]</a></li>
-                </ul>
+		      <div class="row-fluid">
+                <p class="span4 warning text-warning">For extreme ranges other than<br />
+                    <span class="red">1000&deg;C &lt; T &lt; 1400&deg;C or -6 &lt; log fO<sub>2</sub> &lt; -16</span>,<br />
+                    the zirconia cell may become non-ideal.
+                </p>
+              </div>
+		      <ul>
+                <li><a href="#gas" class="btn btn-default gas-btn program-button" rel="gas">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</a></li>
+                <li><a href="#gasrev2" class="btn btn-default gasrev2-btn program-button" rel="gasrev2">Determine fO<sub>2</sub> of sample from EMF and T of the reference furnace.</a></li>
+                <li><a href="#ramp" class="btn btn-default ramp-btn program-button" rel="ramp">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</a></li>
+                <li><a href="calib3" class="btn btn-warning calib3-btn program-button" rel="//calib3">Determine EMF fO<sub>2</sub> and buffer + offset for a fixed gas mixture and temperature range. [DISABLED]</a></li>
+              </ul>
             </div>
         </div>
         <div id="gas" class="row-fluid form-inline program-section">
             <ul class="span4">
                 <li><p class="calc-header">Determine CO<sub>2</sub>% of gas mixture and fO<sub>2</sub>/EMF of the reference furnace.</p></li>
-                <li><label for="gas-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input" value="1250" /><span class="units">&deg;C</span></label></li>
-                <li><label for="gas-samp-temp">Reference Temperature <input name="tref" type="text" class="gas-input" value="1200" /><span class="units">&deg;C</span></label></li>
-                <li><label for="gas-samp-temp">Zirconia Cell Correction <input name="corrEMF" type="text" class="gas-input" value="32" /><span class="units">mV</span></label></li>
+                <li><label for="gas-samp-temp">Sample Temperature <input name="tc" type="text" class="gas-input" placeholder="1250" value="" /><span class="units">&deg;C</span></label></li>
+                <li><label for="gas-samp-temp">Reference Temperature <input name="tref" type="text" class="gas-input" placeholder="1200" value="" /><span class="units">&deg;C</span></label></li>
+                <li><label for="gas-samp-temp">Zirconia Cell Correction <input name="corrEMF" type="text" class="gas-input" placeholder="32" value="" /><span class="units">mV</span></label></li>
                 <li class="fo2-check"><label for="fo2-check">Use manual fO<sub>2</sub> instead of buffer + offset.<input type="checkbox" name="fo2-check" value="1"></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
                         <select name="buffer" class="">
@@ -78,15 +82,15 @@
                             <option value="NNO">NNO</option>
                             <option value="QFM">QFM</option>
                         </select>
-                        <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
+                        <input name="fO2Offset2" type="text" class="input-mini gas-input" placeholder="-1" value=""/>
                 </label></li>
-                <li class="fo2-manual"><label for="gas-samp-fo2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
+                <li class="fo2-manual"><label for="gas-samp-fo2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input" value="" /><span class="units">log</span></label></li>
                 <li class="buttons">
-                    <a href="#gas" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="#gas-output" javascript:;" name="process" class="btn btn-warning">CALCULATE</a>
                     <a href="#gas" name="reset" class="btn btn-danger">RESET</a>
                 </li>
             </ul>
-            <div id="gas-output-area" class="span5 offset1 gas-output-area"></div>
+            <div id="gas-output" class="span5 offset1 gas-output-area"></div>
         </div>
         <div id="gasrev2" class="row-fluid form-inline program-section">
             <ul class="span4">
@@ -109,16 +113,16 @@
                 <li><label for="realEMF">Observed EMF <input name="realEMF" type="text" class="gas-input" value="-914.401"/><span class="units">mV</span></label></li>
                 <li><label for="corrEMF">Zirconia cell Correction <input name="corrEMF" type="text" class="gas-input" value="32"/><span class="units">mV</span></label></li>
                 <li class="buttons">
-                    <a href="#gasrev2-output-area" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="#gasrev2-output" name="process" class="btn btn-warning">CALCULATE</a>
                     <a href="#gasrev2" name="reset" class="btn btn-danger">RESET</a>
                 </li>
             </ul>
-            <div id="gasrev2-output-area" class="span5 offset1 gas-output-area"></div>
+            <div id="gasrev2" class="span5 offset1 gas-output-area"></div>
         </div>
         <div id="ramp" class="row-fluid form-inline program-section">
             <ul class="span4">
                 <li><p class="calc-header">Determine range of fO<sub>2</sub> experienced by sample with fixed gas mixture and ramped temperature.</p></li>
-                <li><label for="tc">Original Sample Temperature <input name="tc" type="text" class="gas-input" value="1200"/><span class="units">&deg;C</span></label></li>
+                <li><label for="tc">Start Sample Temperature <input name="tc" type="text" class="gas-input" value="1200"/><span class="units">&deg;C</span></label></li>
                 <li><label for="tfinal">Final Sample Temperature <input name="tfinal" type="text" class="gas-input" value="1300"/><span class="units">&deg;C</span></label></li>
                 <li class="fo2-check"><label for="fo2-check">Use manual fO<sub>2</sub> instead of buffer + offset.<input type="checkbox" name="fo2-check" value="1"></label></li>
                 <li class="offset-input"><label for="buffer" class="">Buffer
@@ -134,11 +138,11 @@
                 <li class="fo2-manual"><label for="specfO2">Sample fO<sub>2</sub> <input name="specfO2" type="text" class="gas-input"/><span class="units">log</span></label></li>
                 <li><label for="rampstep">fO<sub>2</sub> Output Step Size <input name="rampstep" type="text" class="gas-input"value="100"/><span class="units">&deg;C</span></label></li>
                 <li class="buttons">
-                    <a href="#ramp-output-area" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="#ramp-output" name="process" class="btn btn-warning">CALCULATE</a>
                     <a href="#ramp" name="reset" class="btn btn-danger">RESET</a>
                 </li>
             </ul>
-            <div id="ramp-output-area" class="span5 offset1 gas-output-area"></div>
+            <div id="ramp-output" class="span5 offset1 gas-output-area"></div>
         </div>
         <div id="calib3" class="row-fluid program-section form-inline">
             <ul class="span4">
@@ -158,11 +162,11 @@
                         <input name="fO2Offset2" type="text" class="input-mini gas-input" value="-1"/>
                 </label></li>
                 <li class="buttons">
-                    <a href="#calib3-output-area" name="process" class="btn btn-warning">CALCULATE</a>
+                    <a href="#calib3-output" name="process" class="btn btn-warning">CALCULATE</a>
                     <a href="#calib3" name="reset" class="btn btn-danger">RESET</a>
                 </li>
             </ul>
-            <div id="calib3-output-area" class="span5 offset1 gas-output-area"></div>
+            <div id="calib3-output" class="span5 offset1 gas-output-area"></div>
         </div><!--/row-->
         <hr>
         <div id="bad-ratio-popup" class="modal hide fade">
@@ -184,13 +188,6 @@
       <!-- Le javascript ================================================== -->
       <!-- Placed at the end of the document so the pages load faster -->
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-      <script src="//ajax.googleapis.com/ajax/libs/webfont/1.1.0/webfont.js">
-        WebFontConfig = {
-            google: {
-                families: [ 'Titillium Web:regular,bold,200,400,700' ]
-            }
-        };
-      </script>
       <script src="./js/jquery.responsiveWeb.js"></script>
       <script src="./js/bootstrap.js"></script>
       <script src="./js/mustache.js"></script>
